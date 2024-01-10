@@ -97,6 +97,7 @@ def page_2024():
     
     if st.session_state.selected_field == "Lecture 1":
         image_path2 = "08_31_2022_Lec1_pub.pdf"
+        current_directory = os.getcwd()
         pdf_path = os.path.join(current_directory, image_path1)
         display_pdf(pdf_path)
     elif st.session_state.selected_field == "Lecture 1 Notebook":
