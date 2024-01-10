@@ -5,18 +5,20 @@ import streamlit as st
 import pandas as pd
 import sys 
 from MNIST_Lecture import get_mnist_notebook
-from pdf2image import convert_from_path
+import fitz
 from calendar_utils import get_calendar
-from datetime import datetime
+from io import BytesIO
 
 if "selected_field" not in st.session_state:
     st.session_state.selected_field = None
 
 def display_pdf(pdf_path):
-    images = convert_from_path(pdf_path)
-
-    for i, image in enumerate(images):
-        st.image(image, caption=f"Slide {i+1}", use_column_width=True)
+    doc = fitz.open(pdf_path)  # open document
+    for i, page in enumerate(doc):
+        image = page.get_pixmap()  # render page to an image
+        img_bytes = image.tobytes()
+        img_buffer = BytesIO(img_bytes)
+        st.image(img_buffer, caption=f"Slide {i+1}", use_column_width=True)
 
 
 st.set_page_config(
