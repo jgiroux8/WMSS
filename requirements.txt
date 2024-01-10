@@ -69,7 +69,7 @@ oauthlib==3.2.2
 openai==1.3.6
 packaging==23.2
 pandas==2.1.3
-pdf2image==1.17.0
+pdf2image
 Pillow==10.1.0
 protobuf==4.25.1
 pyarrow==14.0.1
