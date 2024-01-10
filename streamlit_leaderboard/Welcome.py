@@ -43,8 +43,13 @@ def welcome_page():
 
     st.markdown("## A multi-institutional collaboration to develop a Fusion Data Platform for Machine Learning applications using Magnetic Fusion Energy (MFE) data.")
     st.markdown("MFE devices participating in this research are Alcator C-Mod, Pegasus-III, CTH and HBT-EP. An interoperable and publicly available library will be developed leveraging data from these devices. The library will have built-in pipelines for ML application design, allowing preservation of reproducible scientific results. Curated research products will be released through the newly designed platform, which will adhere to Findable, Accessible, Interoperable, Reusable (FAIR) and Open Science (OS) guidelines.")
-    st.image("../WhoWeAre.png",use_column_width=True)
-    st.image("../Affiliations.png",use_column_width=True)
+    current_directory = os.getcwd()
+    image_path1 = "WhoWeAre.png"
+    image_path2 = "Affiliations.png"
+    absolute_path1 = os.path.join(current_directory, image_path1)
+    absolute_path2 = os.path.join(current_directory, image_path2)
+    st.image(absolute_path1,use_column_width=True)
+    st.image(absolute_path2,use_column_width=True)
 
 
     st.divider()
@@ -90,7 +95,9 @@ def page_2024():
     st.session_state.selected_field = st.sidebar.radio("Resources", ["Lecture 1", "Lecture 1 Notebook","Calendar"],index=None)
     
     if st.session_state.selected_field == "Lecture 1":
-        display_pdf("08_31_2022_Lec1_pub.pdf")
+        image_path2 = "08_31_2022_Lec1_pub.pdf"
+        pdf_path = os.path.join(current_directory, image_path1)
+        display_pdf(pdf_path)
     elif st.session_state.selected_field == "Lecture 1 Notebook":
         get_mnist_notebook()
     elif st.session_state.selected_field == "Calendar":
