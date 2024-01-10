@@ -8,6 +8,7 @@ from MNIST_Lecture import get_mnist_notebook
 import fitz
 from calendar_utils import get_calendar
 from io import BytesIO
+import os
 
 if "selected_field" not in st.session_state:
     st.session_state.selected_field = None
