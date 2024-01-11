@@ -3,23 +3,15 @@
 #from yaml.loader import SafeLoader
 import streamlit as st
 import pandas as pd
-import sys 
-from MNIST_Lecture import get_mnist_notebook
-import fitz
+import sys
+from MNIST_Lecture import get_mnist_notebook,initialize
 from calendar_utils import get_calendar
-from io import BytesIO
 import os
+from PIL import Image
+from utils import scroll_top,display_pdf
 
 if "selected_field" not in st.session_state:
     st.session_state.selected_field = None
-
-def display_pdf(pdf_path):
-    doc = fitz.open(pdf_path)  # open document
-    for i, page in enumerate(doc):
-        image = page.get_pixmap()  # render page to an image
-        img_bytes = image.tobytes()
-        img_buffer = BytesIO(img_bytes)
-        st.image(img_buffer, caption=f"Slide {i+1}", use_column_width=True)
 
 
 st.set_page_config(
@@ -33,12 +25,9 @@ st.set_page_config(
     }
 )
 
-
-
-#st.image("/Users/james/AI4EICHackathon2023-Streamlit/WM_Logo.jpeg", caption=None,width=100)
-
 def welcome_page():
-    st.title("Open and FAIR Fusion for Maching Learning Applications")
+
+    st.markdown("# Open and FAIR Fusion for Maching Learning Applications")
     st.markdown("### Three-year grant sponsored by the Department of Energy (DOE) Office of Fusion Energy Sciences (FES).")
     st.divider()
 
@@ -49,17 +38,23 @@ def welcome_page():
     image_path2 = "Affiliations.png"
     absolute_path1 = os.path.join(current_directory, image_path1)
     absolute_path2 = os.path.join(current_directory, image_path2)
-    st.image(absolute_path1,use_column_width=True)
-    st.image(absolute_path2,use_column_width=True)
+    print(absolute_path1)
+    st.image(Image.open(absolute_path1),use_column_width=True)
+    st.image(Image.open(absolute_path2),use_column_width=True)
 
 
     st.divider()
-    st.markdown("## W&M Summer School")
-    st.markdown("An intensive 2-week summer school focused on undergraduate students with backgrounds in physics, engineering, computer science, applied mathematics and data science will be offered at William & Mary. This summer course will include a close to equal distribution of traditional instruction and active projects. The traditional instruction will provide daily 50 min instruction in 4 classes with a focus on computing, applied mathematics, machine learning and fusion energy. These classes will be based on existing classes offered in data science at W&M, such as databases, applied machine learning, Bayesian reasoning in data science. These classes will be supplemented with a class focused on fusion energy for the applications the students will tackle during the hands-on component and for students’ summer research.")
-    st.markdown("The 1st edition of the Summer School will be held in person at W&M during June 3-15, 2024. Open Call for registrations available soon & deadline end of January 2024.")
-    st.markdown("[Register Here]({https://docs.google.com/forms/d/e/1FAIpQLScKUQtVPkZ4pDj2su3_xISVxHcXLdtuRpsGPJ4cJkK4BjkAXg/viewform})")
-    st.markdown("**More details coming soon!**")
-
+    st.markdown("## ML/AI for Fusion Energy Summer School at W&M")
+    st.markdown("An intensive 2-week summer school focused on undergraduate students with backgrounds in physics, engineering, computer science, applied mathematics and data science will be offered at William & Mary. This summer course will include a close to equal distribution of traditional instruction and active projects. The traditional instruction will provide daily 80 min instruction in 3 classes with a focus on computing, applied mathematics, machine learning and fusion energy. These classes will be based on existing classes offered in data science at W&M, such as databases, applied machine learning, Bayesian reasoning in data science. These classes will be supplemented with a class focused on fusion energy for the applications the students will tackle during the hands-on component and for students’ summer research. Stay tuned for a draft agenda to be posted soon!")
+    st.markdown("The 1st edition of the Summer School will be held in person at W&M during June 3-15, 2024.")
+    st.markdown("### Registrations are now open!")
+    email_address = "wmsummerschool@gmail.com"
+    gmail_link = f'<a href="mailto:{email_address}" target="_blank">wmsummerschool@gmail.com</a>'
+    st.markdown(f'The [registration Google Form](https://docs.google.com/forms/d/e/1FAIpQLScbx-THJndD6zxPfOmg8PYbFZOO-M9SzFLRRJfCYHf2ZTstng/viewform?pli=1) requires you to sign-in with a Google account in order to upload your CV and unofficial transcript. For support and/or questions please write an email to {gmail_link}.', unsafe_allow_html=True)
+    ai_image = os.path.join(current_directory,"AI_Thinking.png")
+    left_co,cent_co,last_co = st.columns(3)
+    with cent_co:
+        st.image(Image.open(ai_image),width=400)
     st.divider()
     st.markdown("## External Colobarators")
     names = [
@@ -83,38 +78,50 @@ def welcome_page():
     "[Department of Energy Awards Grant to The HDF Group and Collaborators for Fusion Energy Data Management Tools](https://www.hdfgroup.org/2023/09/department-of-energy-awards-grant-to-the-hdf-group-and-collaborators-for-fusion-energy-data-management-tools/)"]
     links = "\n".join([f" * {link}" for link in links])
     st.markdown(links)
-    
-def landing_page():
-    st.title('Welcome to the W&M Summer School of 2024')
-    st.divider()
-    st.markdown('On the left sidebar, you can find a list of all relevant notebooks and lectures.')
 
 def page_2024():
-    st.title('Welcome to the W&M Summer School of 2024')
-    st.divider()
-    
-    st.session_state.selected_field = st.sidebar.radio("Resources", ["Lecture 1", "Lecture 1 Notebook","Calendar"],index=None)
-    
-    if st.session_state.selected_field == "Lecture 1":
+
+    st.session_state.selected_field = st.sidebar.radio("Resources", ["Main Page","Calendar","Lecture 1", "Lecture 1 Notebook"])
+
+    if st.session_state.selected_field == "Main Page":
+        st.markdown("# Welcome to the W&M Summer School of 2024!")
+        st.markdown("On the sidebar you can find selected links to various lectures and associated notebooks.")
+        st.markdown("If you have any issues, feel free to contact us!")
+
+    elif st.session_state.selected_field == "Lecture 1":
+        top = st.session_state.top_button_clicked if "top_button_clicked" in st.session_state else False
+        st.title("Lecture 1")
+        st.divider()
         image_path3 = "08_31_2022_Lec1_pub.pdf"
         current_directory = os.getcwd()
         pdf_path = os.path.join(current_directory, image_path3)
         display_pdf(pdf_path)
+
+        top = st.sidebar.button("Top of Page", key='top')
+        if top:
+            scroll_top()
+            st.experimental_rerun()
+
     elif st.session_state.selected_field == "Lecture 1 Notebook":
+        st.title('Example MNIST Notebook with Sklearn')
+        st.divider()
         get_mnist_notebook()
     elif st.session_state.selected_field == "Calendar":
+        st.title("Calendar")
         calendar = get_calendar()
         st.write(calendar)
-            
-        
+
 def page_2025():
     st.title('Welcome to the W&M Summer School of 2025')
     st.divider()
     st.write('Under Development')
-    
+
 
 def main():
     # Set the default page to Welcome
+    if "state" not in st.session_state:
+        st.session_state.state = initialize()
+
     st.experimental_set_query_params(page="Welcome")
 
     # Check the URL parameters
@@ -122,16 +129,15 @@ def main():
 
     st.sidebar.title("Navigation")
     selected_page = st.sidebar.radio("Go to", ["Welcome", "2024","2025"])
-
     if selected_page == "Welcome":
         welcome_page()
     elif selected_page == "2024":
-        # Update URL to reflect the selected page
         st.experimental_set_query_params(page="2024")
         page_2024()
     elif selected_page == "2025":
         st.experimental_set_query_params(page="2025")
         page_2025()
+
 
 if __name__ == "__main__":
     main()
