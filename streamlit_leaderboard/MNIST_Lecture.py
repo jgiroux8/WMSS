@@ -44,8 +44,8 @@ def reset_toggle():
 def get_mnist_notebook():
     reset = st.sidebar.button('Reset', key='reset')
     if reset:
-        reset_toggle()
         scroll_top()
+        reset_toggle()
         st.rerun()
 
     st.markdown("## Recognizing hand-written digits")
